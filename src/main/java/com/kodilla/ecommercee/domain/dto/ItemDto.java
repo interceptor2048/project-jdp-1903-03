@@ -11,7 +11,7 @@ public class ItemDto {
     private Long id;
     private Long cart;
     private Long productId;
-    //private String productName;
+    private String productName;
     //private Double productPrice;
     private int quantity;
 
