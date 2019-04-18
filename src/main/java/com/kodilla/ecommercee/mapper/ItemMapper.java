@@ -34,6 +34,7 @@ public class ItemMapper {
                 item.getId(),
                 item.getCart().getCartId(),
                 item.getProduct().getId(),
+                item.getProduct().getName(),
                 item.getQuantity());
     }
 
