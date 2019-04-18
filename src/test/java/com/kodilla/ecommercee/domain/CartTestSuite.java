@@ -1,7 +1,8 @@
 package com.kodilla.ecommercee.domain;
 
+
 import com.kodilla.ecommercee.domain.dto.CartDto;
-import com.kodilla.ecommercee.domain.dto.ProductDto;
+import com.kodilla.ecommercee.domain.dto.ItemDto;
 import com.kodilla.ecommercee.mapper.CartMapper;
 import com.kodilla.ecommercee.mapper.ProductMapper;
 import com.kodilla.ecommercee.service.CartService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,62 +64,28 @@ public class CartTestSuite {
         Assert.assertEquals(3, cartList.size());
     }
 
+
     @Test
     public void testProductsFromCart() {
-        /*//Given
+        //Given
         Cart cart = new Cart();
-
-        Product product = new Product("apple", 20.0);
-        Product product2 = new Product("ham", 40.0);
-        Product product3 = new Product("washing machine", 500.50);
-
-        List<Product> productList = new ArrayList<>();
-        productList.add(product);
-        productList.add(product2);
-        productList.add(product3);
-
-        cartService.saveCart(cart);
-
-        Long id = cart.getCartId();
-
-        cartService.getCart(id).getProductsList().add(product);
-        cartService.getCart(id).getProductsList().add(product2);
-        cartService.getCart(id).getProductsList().add(product3);
-
+        Item item1 = new Item(cart, new Product("Ham", 10.5), 10);
+        Item item2 = new Item(cart, new Product("Hamster", 3.4), 5);
+        Item item3 = new Item(cart, new Product("Hammer", 10.1), 2);
         cartService.saveCart(cart);
 
         //When
-        List<Product> productListRead = cartService.getCart(id).getProductsList();
-
-        //Then
-        Assert.assertEquals(productList.size(), productListRead.size());*/
-    }
-
-    @Test
-    public void testProductsSizeFromCart() {
-        /*//Given
-        Cart cart = new Cart();
-
-        Product product = new Product("apple", 20.0);
-        Product product2 = new Product("ham", 40.0);
-        Product product3 = new Product("washing machine", 500.50);
-
+        cartService.getCart(cart.getCartId()).getItemsList().add(item1);
+        cartService.getCart(cart.getCartId()).getItemsList().add(item2);
+        cartService.getCart(cart.getCartId()).getItemsList().add(item3);
         cartService.saveCart(cart);
 
-        Long id = cart.getCartId();
-
-        cartService.getCart(id).getProductsList().add(product);
-        cartService.getCart(id).getProductsList().add(product2);
-        cartService.getCart(id).getProductsList().add(product3);
-
-        cartService.saveCart(cartService.getCart(id));
-
-        //When
-        List<Product> productList = cartService.getCart(id).getProductsList();
-
         //Then
-        Assert.assertEquals(3, productList.size());*/
+        Assert.assertEquals(3, cartService.getCart(cart.getCartId()).getItemsList().size());
+
+
     }
+
 
     @Test
     public void testGetAllCarts() {
@@ -138,60 +106,85 @@ public class CartTestSuite {
         //Then
         Assert.assertEquals(4, cartList.size());
     }
+
     @Test
     public void testMapToCartDto() {
-        /*//Given
-        Cart cart1 = new Cart();
-        Product productInCart1 = new Product("Product in cart 1", 55.2);
-        //when(cartService.getCart(1L)).thenReturn(cart1);
-        cart1.getProductsList().add(productInCart1);
-        productInCart1.setCart(cart1);
-        String nameProductInCart1 = productInCart1.getName();
+        //Given
+        Cart cart = new Cart();
+        Item item1 = new Item(cart, new Product("Ham", 10.5), 10);
+        Item item2 = new Item(cart, new Product("Hamster", 3.4), 5);
+        Item item3 = new Item(cart, new Product("Hammer", 10.1), 2);
+
+        cart.getItemsList().add(item1);
+        cart.getItemsList().add(item2);
+        cart.getItemsList().add(item3);
+        cartService.saveCart(cart);
+
         //When
-        CartDto cart1Dto = cartMapper.mapToCartDto(cart1);
-        int id = cart1.getProductsList().indexOf(productInCart1);
-        String nameProductFromMappedCart = cart1Dto.getProductsList().get(id).getName();
+        CartDto cartDto = cartMapper.mapToCartDto(cart);
+
         //Then
-        Assert.assertEquals(nameProductInCart1, nameProductFromMappedCart);*/
+        Assert.assertEquals("Hammer",cartDto.getItemsList().get(2).getProductName());
+        Assert.assertEquals(3,cartDto.getItemsList().size());
+
+    }
+
+    @Test
+    public void testMapToCart(){
+        //Given
+        ItemDto itemDto1 = new ItemDto(1L,1L,1L,"Ham",10);
+        ItemDto itemDto2 = new ItemDto(1L,1L,1L,"Hamster",5);
+        ItemDto itemDto3 = new ItemDto(1L,1L,1L,"Hammer",7);
+        List<ItemDto>itemDtoList = new ArrayList<>();
+        itemDtoList.add(itemDto1);
+        itemDtoList.add(itemDto2);
+        itemDtoList.add(itemDto3);
+        CartDto cartDto = new CartDto(1L,itemDtoList);
+
+        Cart cart = cartMapper.mapToCart(cartDto);
+        cartService.saveCart(cart);
+        cart = cartMapper.mapToCart(cartDto);
+
+        System.out.println(cartDto.getCartId());
+        System.out.println(cartDto.getItemsList().get(0).getProductName());
+        System.out.println(cart.getCartId());
+        //System.out.println(cart.getItemsList().get(0).getProduct().getName());
+
+
+
     }
 
     @Test
     public void testMapToCartDtoList() {
-        /*//Given
+        //Given
         Cart cart1 = new Cart();
+        Item item1 = new Item(cart1, new Product("Ham", 10.5), 10);
+        Item item2 = new Item(cart1, new Product("Hamster", 3.4), 5);
+        Item item3 = new Item(cart1, new Product("Hammer", 10.1), 2);
+        cart1.getItemsList().add(item1);
+        cart1.getItemsList().add(item2);
+        cart1.getItemsList().add(item3);
+
         Cart cart2 = new Cart();
-        Product product1 = new Product("Product11", 20.);
-        Product product2 = new Product("Product22", 25.5);
-        Product product3 = new Product("Product33", 30.2);
-        cart1.getProductsList().add(product1);
-        cart2.getProductsList().add(product2);
-        cart2.getProductsList().add(product3);
-        product1.setCart(cart1);
-        product2.setCart(cart2);
-        product3.setCart(cart2);
+        Item item4 = new Item(cart2, new Product("Hamburger", 7.5), 2);
+        Item item5 = new Item(cart2, new Product("Computer", 1500.0), 1);
+        Item item6 = new Item(cart2, new Product("Camera", 500.0), 1);
+        cart2.getItemsList().add(item4);
+        cart2.getItemsList().add(item5);
+        cart2.getItemsList().add(item6);
+
         List<Cart> cartList = new ArrayList<>();
         cartList.add(cart1);
         cartList.add(cart2);
+
         //When
         List<CartDto> cartDtoList = cartMapper.mapToCartDtoList(cartList);
-        //Then
-        Assert.assertEquals(cartList.size(), cartDtoList.size());
-        Assert.assertEquals(cartList.get(0).getProductsList().get(0).getName(), cartDtoList.get(0).getProductsList().get(0).getName());
-        Assert.assertEquals(cartList.get(1).getProductsList().get(0).getName(), cartDtoList.get(1).getProductsList().get(0).getName());
-        Assert.assertEquals(cartList.get(1).getProductsList().get(1).getName(), cartDtoList.get(1).getProductsList().get(1).getName());*/
-    }
 
-    @Test
-    public void testMapToCart() {
-        /*CartDto cartDto1 = new CartDto();
-        ProductDto productDtoInCart1 = new ProductDto(1L, "Product in cart 1", 36.2, cartDto1.getCartId(), 1L );
-        cartDto1.getProductsList().add(productDtoInCart1);
-        String nameProductDtoInCart1 = productDtoInCart1.getName();
-        //When
-        Cart mappedCartDto1 = cartMapper.mapToCart(cartDto1);
-        int idProductDtoInCartDto1 = cartDto1.getProductsList().indexOf(productDtoInCart1);
-        String nameProductDtoFromMappedCartDto1 = mappedCartDto1.getProductsList().get(idProductDtoInCartDto1).getName();
         //Then
-        Assert.assertEquals(nameProductDtoInCart1, nameProductDtoFromMappedCartDto1);*/
+        Assert.assertEquals("Camera",cartDtoList.get(1).getItemsList().get(2).getProductName());
+        Assert.assertEquals(2,cartDtoList.size());
+
+
+
     }
 }
